@@ -30,7 +30,10 @@ const io = socketIo(server, {
 });
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "https://aaroh-frontend.vercel.app", // ✅ frontend domain
+  credentials: true                             // ✅ must be true if using withCredentials
+}));
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const uploadRoutes = require("./routes/uploadRoutes");
