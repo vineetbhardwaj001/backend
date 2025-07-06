@@ -40,9 +40,14 @@ router.post("/upload-ideal", upload.single("ideal"), (req, res) => {
     console.log("✅ File renamed to:", idealPath);
 
     // 🧠 Run AI script to extract ideal chords
-    const python = `"C:/Program Files/Python312/python.exe"`; // Adjust if needed
+
+     const python = "python3"; // ✅ Use python3 on Render
+  const script = path.join(__dirname, "..", "python-model", "predict.py");
+  const command = `${python} "${script}" "${idealPath}"`;
+
+   /* const python = `"C:/Program Files/Python312/python.exe"`; // Adjust if needed
     const script = path.join(__dirname, "..", "python-model", "predict.py");
-    const command = `${python} "${script}" "${idealPath}"`;
+    const command = `${python} "${script}" "${idealPath}"`;*/
 
     console.log("👉 Running command:", command);
 

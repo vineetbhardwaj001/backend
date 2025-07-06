@@ -10,8 +10,11 @@ exports.analyzeAudio = (req, res) => {
     return res.status(400).json({ message: "At least one audio (ideal or practice) is required" });
   }
 
-  const pythonPath = `"C:/Program Files/Python312/python.exe"`;
-  const scriptPath = `"${path.join(__dirname, "../python-model/predict.py")}"`;
+const pythonPath = "python3"; // ✅ Linux
+  const scriptPath = path.join(__dirname, "../python-model/predict.py");
+
+  /*const pythonPath = `"C:/Program Files/Python312/python.exe"`;
+  const scriptPath = `"${path.join(__dirname, "../python-model/predict.py")}"`;*/
 
   const idealFull = idealPath
     ? path.join(__dirname, "../uploads", path.basename(idealPath))
