@@ -24,7 +24,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: 'https://5cz083bb-5173.inc1.devtunnels.ms',
+    origin: 'https://aaroh-frontend.vercel.app',
     methods: ["GET", "POST"],
   },
 });
