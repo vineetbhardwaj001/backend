@@ -1,16 +1,14 @@
 services:
   - type: web
     name: aaroh-backend
-    env: node
-    buildCommand: |
-      apt-get update && apt-get install -y python3 python3-pip ffmpeg
-      pip3 install librosa numpy soundfile
-      npm install
-    startCommand: node server/server.js
+    env: docker
+    plan: free
+    branch: main
+    rootDir: backend/auth-system
+    dockerfilePath: backend/auth-system/Dockerfile
+    autoDeploy: true
     envVars:
       - key: MONGO_URI
-        value: your_mongo_uri_here
+        value: YOUR_MONGO_URI
       - key: JWT_SECRET
-        value: your_jwt_secret_here
-    plan: free
-    region: oregon
+        value: YOUR_SECRET

@@ -22,7 +22,8 @@ router.post("/upload-practice", upload.single("practice"), (req, res) => {
   }
 
   const practicePath = path.join(__dirname, "../uploads", practiceFile.filename);
-  const python = `"C:/Program Files/Python312/python.exe"`;
+   const python = "python3"; 
+  // const python = `"C:/Program Files/Python312/python.exe"`;
   const script = path.join(__dirname, "../python-model/predict.py");
 
   const command = `${python} "${script}" "${idealPath}" "${practicePath}"`;
