@@ -1,4 +1,4 @@
-# Use official Node.js image
+# Use official Node.js image  .
 FROM node:18
 
 # Install Python, pip, and ffmpeg

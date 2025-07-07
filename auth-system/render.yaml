@@ -3,12 +3,11 @@ services:
     name: aaroh-backend
     env: docker
     plan: free
+    repo: https://github.com/vineetbhardwaj001/backend
     branch: main
-    rootDir: backend/auth-system
-    dockerfilePath: backend/auth-system/Dockerfile
-    autoDeploy: true
+    dockerfilePath: Dockerfile
+    buildCommand: ""
+    startCommand: ""
     envVars:
       - key: MONGO_URI
-        value: YOUR_MONGO_URI
-      - key: JWT_SECRET
-        value: YOUR_SECRET
+        value: your-mongo-uri-here
