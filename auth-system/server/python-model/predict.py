@@ -5,6 +5,155 @@ import numpy as np
 
 # 🎹 Chord Templates (12-note chroma vectors)
 CHORD_TEMPLATES = {
+    "C":    [1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+    "Cm":   [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+    "D":    [0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+    "Dm":   [0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+    "E":    [0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+    "Em":   [0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+    "F":    [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+    "G":    [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+    "A":    [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    "Am":   [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+    "B":    [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+    "Bm":   [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0],
+}
+
+# 🧠 Match a chroma vector to a chord template
+def match_chord(chroma_column):
+    scores = {}
+    for chord, template in CHORD_TEMPLATES.items():
+        scores[chord] = np.dot(chroma_column, template)
+    return max(scores, key=scores.get)
+
+# 🎸 Extract chords using template matching (✅ Optimized)
+def extract_chords(audio_path):
+    y, sr = librosa.load(audio_path, sr=22050)  # ✅ Faster sample rate
+    hop = 2048  # ✅ Less frequent feature extraction
+    chroma = librosa.feature.chroma_cqt(y=y, sr=sr, hop_length=hop)
+    times = librosa.frames_to_time(range(chroma.shape[1]), sr=sr, hop_length=hop)
+
+    chords = []
+    last_chord = None
+    start_time = 0
+
+    for i, t in enumerate(times):
+        chord = match_chord(chroma[:, i])
+        if chord != last_chord:
+            if last_chord is not None:
+                chords.append({
+                    "chord": last_chord,
+                    "start": round(start_time, 2),
+                    "duration": round(t - start_time, 2),
+                    "stringIndex": int(start_time) % 6,
+                    "correct": True
+                })
+            last_chord = chord
+            start_time = t
+
+    if last_chord is not None:
+        chords.append({
+            "chord": last_chord,
+            "start": round(start_time, 2),
+            "duration": round(times[-1] - start_time, 2),
+            "stringIndex": int(start_time) % 6,
+            "correct": True
+        })
+
+    return chords
+
+# 🧠 Compare ideal vs practice chords and build summary
+def compare_chords(ideal, practice):
+    feedback = []
+    correct_count = 0
+
+    for i, p_chord in enumerate(practice):
+        match = i < len(ideal) and ideal[i]["chord"] == p_chord["chord"]
+        if match:
+            correct_count += 1
+        feedback.append({
+            **p_chord,
+            "correct": match
+        })
+
+    total = len(practice)
+    accuracy = round((correct_count / max(total, 1)) * 100, 2)
+    level = "Beginner"
+    if accuracy >= 85:
+        level = "Professional"
+    elif accuracy >= 60:
+        level = "Intermediate"
+
+    stars = 1
+    if accuracy >= 90:
+        stars = 5
+    elif accuracy >= 75:
+        stars = 4
+    elif accuracy >= 60:
+        stars = 3
+    elif accuracy >= 40:
+        stars = 2
+
+    mistakes = [f for f in feedback if not f["correct"]]
+    missing = [{"chord": m["chord"], "time": m["start"]} for m in mistakes]
+
+    # Auto-guidance
+    if level == "Professional":
+        guidance = "Excellent! You’re at a professional level. Keep refining your chord transitions."
+        tariff = "🔥 You nailed it! 🎸"
+    elif level == "Intermediate":
+        guidance = "You're doing well. Focus on accuracy and tempo balance."
+        tariff = "🚀 Solid progress! Push a little more for perfection."
+    else:
+        guidance = "You're at the Beginner level. Practice slow transitions, especially between F, C, and Am chords."
+        tariff = "💪 Great start! Keep practicing daily and you'll hit Intermediate soon!"
+
+    mic_summary = {
+        "totalChords": total,
+        "correctChords": correct_count,
+        "mistakes": len(mistakes),
+        "accuracy": accuracy,
+        "level": level,
+        "stars": stars,
+        "missingChords": missing,
+        "guidance": guidance,
+        "tariff": tariff
+    }
+
+    return feedback, mic_summary
+
+# 🚀 Entry point
+if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        ideal_audio = sys.argv[1]
+        chords = extract_chords(ideal_audio)
+        print(json.dumps({ "feedback": chords }))
+
+    elif len(sys.argv) == 3:
+        ideal_audio = sys.argv[1]
+        practice_audio = sys.argv[2]
+
+        ideal_chords = extract_chords(ideal_audio)
+        practice_chords = extract_chords(practice_audio)
+
+        feedback, mic_summary = compare_chords(ideal_chords, practice_chords)
+
+        print(json.dumps({
+            "feedback": feedback,
+            "mic_summary": mic_summary
+        }))
+
+    else:
+        print(json.dumps({ "error": "Invalid number of arguments" }))
+
+
+'''import sys
+import json
+import librosa
+import numpy as np
+
+# 🎹 Chord Templates (12-note chroma vectors)
+CHORD_TEMPLATES = {
     "C":    [1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],  # C E G
     "Cm":   [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],  # C D# G
     "D":    [0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0],  # D F# A
@@ -146,7 +295,7 @@ if __name__ == "__main__":
         }))
 
     else:
-        print(json.dumps({ "error": "Invalid number of arguments" }))
+        print(json.dumps({ "error": "Invalid number of arguments" }))'''
 
 
 ''' ye code work 

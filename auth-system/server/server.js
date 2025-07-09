@@ -14,8 +14,12 @@ const cleanupScript = path.join(__dirname, "cleanupChunks.js");
 // FFmpeg setup
 
 // ✅ FFmpeg for Linux (Render)
-ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
-ffmpeg.setFfprobePath("/usr/bin/ffprobe");
+const isRender = process.env.RENDER === "true" || process.env.NODE_ENV === "production";
+const ffmpegPath = isRender ? "/usr/bin/ffmpeg" : "C:/ffmpeg/bin/ffmpeg.exe";
+const ffprobePath = isRender ? "/usr/bin/ffprobe" : "C:/ffmpeg/bin/ffprobe.exe";
+
+////ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
+//ffmpeg.setFfprobePath("/usr/bin/ffprobe");
 
 /*const ffmpegPath = "C:/ffmpeg/bin/ffmpeg.exe";
 const ffprobePath = "C:/ffmpeg/bin/ffprobe.exe";

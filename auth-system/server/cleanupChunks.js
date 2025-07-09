@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const UPLOAD_DIR = path.join(__dirname, "uploads");
-const MAX_AGE_MINUTES = 7;
+const MAX_AGE_MINUTES = 15;
 const now = Date.now();
 
 fs.readdir(UPLOAD_DIR, (err, files) => {
