@@ -149,7 +149,8 @@ io.on("connection", (socket) => {
         console.log("✅ Step 4: Converted to WAV");
         socket.emit("status", "✅ Step 4: Converted to WAV");
 
-        const pythonPath = `"C:/Program Files/Python312/python.exe"`; // Update if needed
+const command = `python predict.py ...`; // safer if Render supports just `python`
+ // Update if needed
         const scriptPath = path.join(__dirname, "python-model", "predict.py");
         const cmd = `${pythonPath} "${scriptPath}" "${idealPath}" "${mergedWavPath}"`;
 
