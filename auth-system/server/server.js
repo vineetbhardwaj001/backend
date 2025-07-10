@@ -149,8 +149,7 @@ io.on("connection", (socket) => {
         console.log("✅ Step 4: Converted to WAV");
         socket.emit("status", "✅ Step 4: Converted to WAV");
 
-const command = `python predict.py ...`; // safer if Render supports just `python`
- // Update if needed
+const command = `python3 predict.py --input uploads/merged_XXXX.wav ...`; // Update if needed
         const scriptPath = path.join(__dirname, "python-model", "predict.py");
         const cmd = `${pythonPath} "${scriptPath}" "${idealPath}" "${mergedWavPath}"`;
 
