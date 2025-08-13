@@ -33,14 +33,14 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: 'https://liger0p.vercel.app', //'https://aaroh-frontend.vercel.app',
+    origin: 'https://aaroh-ai.vercel.app', //'https://aaroh-frontend.vercel.app',
     methods: ["GET", "POST"],
   },
 });
 
 app.use(express.json());
 app.use(cors({
-  origin: "https://liger0p.vercel.app", // ✅ frontend domain
+  origin: "https://aaroh-ai.vercel.app", // ✅ frontend domain
   credentials: true                             // ✅ must be true if using withCredentials
 }));
 // Routes
